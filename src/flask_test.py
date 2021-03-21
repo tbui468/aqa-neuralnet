@@ -73,7 +73,7 @@ def pred():
 
         with torch.no_grad():
             pred = model(processed_text, torch.tensor([0]))
-            return topic[pred.argmax(1).item()]
+            return { "topic": topic[pred.argmax(1).item()] }
 
 
 #FLASK_ENV=development FLASK_APP=flask_test.py flask run
