@@ -1,4 +1,5 @@
 import os
+import json
 from flask import Flask
 from flask import request
 
@@ -50,13 +51,13 @@ model.load_state_dict(torch.load('text_classification_weights.pth'))
 model.eval()
 
 topic = {
-            0: "world new",
-            1: "sports",
-            2: "business",
-            3: "science/tech"
+            0: "Sports",
+            1: "Business",
+            2: "Science/Tech"
         }
 
 print("loaded model!")
+
 
 app = Flask(__name__)
 
@@ -73,7 +74,8 @@ def pred():
 
         with torch.no_grad():
             pred = model(processed_text, torch.tensor([0]))
-            return { "topic": topic[pred.argmax(1).item()] }
+            #print(pred.numpy()[0]) #this returns a 1-d array that we can now use to extract topic, just slice the tensor to remove world news
+            return { "topic": topic[pred[:, 1:].argmax(1).item()] } #removing first index (belonging to world news)
 
 
 #FLASK_ENV=development FLASK_APP=flask_test.py flask run
